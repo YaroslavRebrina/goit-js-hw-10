@@ -27,21 +27,16 @@ const onInput = e => {
 
       if (response.length >= 2 && response.length <= 10) {
         listMurkupCreation(response);
-
-      } else if (response.length > 10) {
-        return Notiflix.Notify.info(
-          'Too many matches found. Please enter a more specific name.'
-        );
-
       } else if (response.length === 1) {
         infoMurkupCreation(response);
+      } else {
+        hasTooMuchCountriesFound();
       }
     })
     .catch(error => console.log(error));
 };
 
 inputRef.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
-
 
 function infoMurkupCreation(response) {
   listRef.innerHTML = '';
@@ -75,4 +70,10 @@ function listMurkupCreation(response) {
     })
     .join('');
   listRef.innerHTML = listMurkup;
+}
+
+function hasTooMuchCountriesFound() {
+  return Notiflix.Notify.info(
+    'Too many matches found. Please enter a more specific name.'
+  );
 }
