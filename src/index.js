@@ -26,28 +26,31 @@ const onInput = e => {
       }
 
       if (response.length >= 2 && response.length <= 10) {
-        infoRef.innerHTML = '';
-        // продовжи звідси, мап для кожного елементу з державою
-        const listMurkup = response
-          .map(({ flags, name }) => {
-            return `<li class="wrapper"><img class="img" src="${flags.svg}" alt="f${flags.alt}">
+        listMurkupCreation(response);
 
-            <p>${name.official}</p></li>`;
-          })
-          .join('');
-        listRef.innerHTML = listMurkup;
       } else if (response.length > 10) {
         return Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
-      } else if (response.length === 1) {
-        listRef.innerHTML = '';
 
-        const infoMurkup = response
-          .map(({ flags, name, capital, languages, population }) => {
-            return `<div class="wrapper"><img class="img" src="${
-              flags.svg
-            }" alt="f${flags.alt}">
+      } else if (response.length === 1) {
+        infoMurkupCreation(response);
+      }
+    })
+    .catch(error => console.log(error));
+};
+
+inputRef.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
+
+
+function infoMurkupCreation(response) {
+  listRef.innerHTML = '';
+
+  const infoMurkup = response
+    .map(({ flags, name, capital, languages, population }) => {
+      return `<div class="wrapper"><img class="img" src="${flags.svg}" alt="f${
+        flags.alt
+      }">
 
             <p>${name.official}</p>
             </div>
@@ -56,12 +59,20 @@ const onInput = e => {
             <p>Population: ${population}</p>
             <p>Languages: ${Object.values(languages)[0]}</p>
             </div>`;
-          })
-          .join('');
-        infoRef.innerHTML = infoMurkup;
-      }
     })
-    .catch(error => console.log(error));
-};
+    .join('');
+  infoRef.innerHTML = infoMurkup;
+}
 
-inputRef.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
+function listMurkupCreation(response) {
+  infoRef.innerHTML = '';
+
+  const listMurkup = response
+    .map(({ flags, name }) => {
+      return `<li class="wrapper"><img class="img" src="${flags.svg}" alt="f${flags.alt}">
+
+            <p>${name.official}</p></li>`;
+    })
+    .join('');
+  listRef.innerHTML = listMurkup;
+}
