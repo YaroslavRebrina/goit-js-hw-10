@@ -5,5 +5,10 @@ export function fetchCountries(name) {
 
   const URL = `https://restcountries.com/v3.1/name/${name}?${urlSearchParams.toString()}`;
 
-  return fetch(URL);
+  return fetch(URL).then(response => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    return response.json();
+  });
 }

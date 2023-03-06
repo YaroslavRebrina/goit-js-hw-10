@@ -10,21 +10,15 @@ const listRef = document.querySelector('.country-list');
 const infoRef = document.querySelector('.country-info');
 
 const onInput = e => {
-  fetchCountries(e.target.value.trim())
-    .then(response => {
-      if (!response.ok) {
-        return Notiflix.Notify.failure(
-          'Oops, there is no country with that name'
-        );
-      }
-      return response.json();
-    })
-    .then(response => {
-      if (inputRef.value === '') {
-        listRef.innerHTML = '';
-        infoRef.innerHTML = '';
-      }
+  const value = e.target.value.trim();
 
+  if (value === '') {
+    onClearInput;
+    return;
+  }
+
+  fetchCountries(value)
+    .then(response => {
       if (response.length >= 2 && response.length <= 10) {
         listMurkupCreation(response);
       } else if (response.length === 1) {
@@ -33,7 +27,11 @@ const onInput = e => {
         hasTooMuchCountriesFound();
       }
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+      return Notiflix.Notify.failure(
+        'Oops, there is no country with that name'
+      );
+    });
 };
 
 inputRef.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
@@ -76,4 +74,9 @@ function hasTooMuchCountriesFound() {
   return Notiflix.Notify.info(
     'Too many matches found. Please enter a more specific name.'
   );
+}
+
+function onClearInput() {
+  listRef.innerHTML = '';
+  infoRef.innerHTML = '';
 }
